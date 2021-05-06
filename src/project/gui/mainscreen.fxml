@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#moreFunc" prefHeight="646.0" prefWidth="1062.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.gui.Controller">
+   <children>
+      <Canvas fx:id="canvas" height="646.0" onKeyPressed="#moreFunc" onMouseClicked="#addPoint" onMouseDragged="#addPoint" width="1062.0" StackPane.alignment="CENTER" />
+   </children>
+</StackPane>
