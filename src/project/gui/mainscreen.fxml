@@ -7,7 +7,7 @@
 
 <Pane fx:id="pane" prefHeight="646.0" prefWidth="1062.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.gui.Controller">
    <children>
-      <Canvas fx:id="canvas" focusTraversable="true" height="646.0" onKeyPressed="#moreFunc" onMouseClicked="#addPoint" onMouseDragged="#addPoint" onMousePressed="#startTimer" onMouseReleased="#cancelTimer" width="1062.0" />
+      <Canvas fx:id="canvas" focusTraversable="true" height="646.0" onKeyPressed="#moreFunc" onMouseClicked="#addPoint" onMouseDragged="#addPoint"  onMousePressed="#startTimer" onMouseReleased="#cancelTimer" width="1062.0" />
       <Label fx:id="textMode" focusTraversable="false" layoutX="14.0" layoutY="14.0" text="1" textFill="WHITE">
          <font>
             <Font size="18.0" />

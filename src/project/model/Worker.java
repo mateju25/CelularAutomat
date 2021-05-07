@@ -12,7 +12,6 @@ public class Worker {
 
     private static Worker single_instance = null;
 
-    private Element[][] itemMap = new Element[10000][10000];
     private  Map<Coordinates, Element> items = new ConcurrentHashMap<>();
     private  Map<Coordinates, Element> createdItems = new ConcurrentHashMap<>();
 
@@ -43,7 +42,6 @@ public class Worker {
             if (item.getX() >= 0 && item.getX() <= Worker.getInstance().getMaxWidth() && item.getY() >= 0 && item.getY() <= Worker.getInstance().getMaxHeight()) {
                 if (!items.containsKey(item.getCoors())) {
                     items.put(item.getCoors(), item);
-                    itemMap[item.getCoors().getX()][item.getCoors().getY()] = item;
                 }
             }
         }
@@ -52,10 +50,7 @@ public class Worker {
     public void removePoint(int x, int y) {
         synchronized (this) {
             if (x>= 0 && x <= Worker.getInstance().getMaxWidth() && y >= 0 && y <= Worker.getInstance().getMaxHeight()) {
-                if (items.containsKey(new Coordinates(x, y))) {
-                    items.remove(new Coordinates(x, y));
-                }
-                itemMap[x][y] = null;
+                items.remove(new Coordinates(x, y));
             }
         }
     }
@@ -83,24 +78,22 @@ public class Worker {
     public void applyGravity() {
         synchronized (this) {
             createdItems = new ConcurrentHashMap<>();
-            Map<Coordinates, Element> tmp = new ConcurrentHashMap<>();
-            for (Element item : items.values()) {
+            for (Element item : new ConcurrentHashMap<>(items).values()) {
                 if (item instanceof Movable) {
-                    if (!item.isToRemove()) {
-                        item.applyGravity(itemMap);
-                        tmp.put(item.getCoors(), item);
-                    }
-                } else {
-                    tmp.put(item.getCoors(), item);
+                    item.applyGravity(items);
                 }
             }
-            items = tmp;
-            items.putAll(createdItems);
+
+            for (Element item : items.values()) {
+                if (!item.toRemove) {
+                    createdItems.put(item.getCoors(), item);
+                }
+            }
+            items = createdItems;
         }
     }
 
     public void clearPoints() {
-        itemMap = new Element[10000][10000];
         items.clear();
     }
 }

@@ -2,6 +2,7 @@ package project.model;
 
 import javafx.scene.paint.Paint;
 
+import java.util.Map;
 import java.util.Random;
 
 import static javafx.scene.paint.Color.rgb;
@@ -12,7 +13,7 @@ public class Magma extends Element implements Liquid, Movable{
     }
 
     @Override
-    public void applyGravity(Element[][] itemMap) {
+    public void applyGravity(Map<Coordinates, Element> itemMap) {
         if (!moveDown(itemMap)) {
             if (new Random().nextBoolean()) {
                 if (!moveLeft(itemMap))
@@ -30,23 +31,15 @@ public class Magma extends Element implements Liquid, Movable{
     }
 
     @Override
-    public boolean moveLeft(Element[][] itemMap) {
+    public boolean moveLeft(Map<Coordinates, Element> itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() - size, getY())) {
-            if (itemMap[getX() - size][getY()] == null) {
+            if (itemMap.get(new Coordinates(getX() - size, getY())) == null) {
                 swap(itemMap, getX() - size, getY());
                 return true;
             }
-            if (itemMap[getX() - size][getY()] instanceof Water) {
-                int x = getX();
-                int y = getY();
+            if (itemMap.get(new Coordinates(getX() - size, getY())) instanceof Water) {
                 swap(itemMap, getX() - size, getY());
-                if (Worker.getInstance().getItems().get(new Coordinates(x, y)) != null) {
-                    Worker.getInstance().getItems().get(new Coordinates(x, y)).toRemove = true;
-                    Element vapor = new Vapor(new Coordinates(x, y));
-                    Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
-                    itemMap[x][y] = vapor;
-                }
                 return true;
             }
         }
@@ -54,23 +47,15 @@ public class Magma extends Element implements Liquid, Movable{
     }
 
     @Override
-    public boolean moveRight(Element[][] itemMap) {
+    public boolean moveRight(Map<Coordinates, Element> itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() + size, getY())) {
-            if (itemMap[getX() + size][getY()] == null) {
+            if (itemMap.get(new Coordinates(getX() + size, getY())) == null) {
                 swap(itemMap, getX() + size, getY());
                 return true;
             }
-            if (itemMap[getX() + size][getY()] instanceof Water) {
-                int x = getX();
-                int y = getY();
+            if (itemMap.get(new Coordinates(getX() + size, getY())) instanceof Water) {
                 swap(itemMap, getX() + size, getY());
-                if (Worker.getInstance().getItems().get(new Coordinates(x, y)) != null) {
-                    Worker.getInstance().getItems().get(new Coordinates(x, y)).toRemove = true;
-                    Element vapor = new Vapor(new Coordinates(x, y));
-                    Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
-                    itemMap[x][y] = vapor;
-                }
                 return true;
             }
 
@@ -79,23 +64,15 @@ public class Magma extends Element implements Liquid, Movable{
     }
 
     @Override
-    public boolean moveDown(Element[][] itemMap) {
+    public boolean moveDown(Map<Coordinates, Element> itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX(), getY() + size)) {
-            if (itemMap[getX()][getY() + size] == null) {
+            if (itemMap.get(new Coordinates(getX(), getY() + size)) == null) {
                 swap(itemMap, getX(), getY() + size);
                 return true;
             }
-            if (itemMap[getX()][getY() + size] instanceof Water) {
-                int x = getX();
-                int y = getY();
+            if (itemMap.get(new Coordinates(getX(), getY() + size)) instanceof Water) {
                 swap(itemMap, getX(), getY() + size);
-                if (Worker.getInstance().getItems().get(new Coordinates(x, y)) != null) {
-                    Worker.getInstance().getItems().get(new Coordinates(x, y)).toRemove = true;
-                    Element vapor = new Vapor(new Coordinates(x, y));
-                    Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
-                    itemMap[x][y] = vapor;
-                }
                 return true;
             }
         }

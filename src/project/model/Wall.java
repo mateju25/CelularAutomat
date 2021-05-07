@@ -2,6 +2,8 @@ package project.model;
 
 import javafx.scene.paint.Paint;
 
+import java.util.Map;
+
 import static javafx.scene.paint.Color.rgb;
 
 public class Wall extends Element implements Immovable{
@@ -10,7 +12,7 @@ public class Wall extends Element implements Immovable{
     }
 
     @Override
-    public void applyGravity(Element[][] itemMap) {
+    public void applyGravity(Map<Coordinates, Element> itemMap) {
     }
 
     @Override

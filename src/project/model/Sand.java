@@ -2,6 +2,7 @@ package project.model;
 
 import javafx.scene.paint.Paint;
 
+import java.util.Map;
 import java.util.Random;
 
 import static javafx.scene.paint.Color.rgb;
@@ -11,14 +12,14 @@ public class Sand extends Element implements Solid, Movable {
         super(coors);
     }
 
-    public boolean moveLeftDown(Element[][] itemMap) {
+    public boolean moveLeftDown(Map<Coordinates, Element> itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() - size, getY() + size)) {
-            if (itemMap[getX() - size][getY() + size] == null) {
+            if (itemMap.get(new Coordinates(getX() - size, getY() + size)) == null) {
                 swap(itemMap, getX() - size, getY() + size);
                 return true;
             }
-            if (itemMap[getX() - size][getY() + size] instanceof Water) {
+            if (itemMap.get(new Coordinates(getX() - size, getY() + size)) instanceof Water) {
                 swap(itemMap, getX() - size, getY() + size);
                 return true;
             }
@@ -26,14 +27,14 @@ public class Sand extends Element implements Solid, Movable {
         return false;
     }
 
-    public boolean moveRightDown(Element[][] itemMap) {
+    public boolean moveRightDown(Map<Coordinates, Element> itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() + size, getY() + size)) {
-            if (itemMap[getX() + size][getY() + size] == null) {
+            if (itemMap.get(new Coordinates(getX() + size, getY() + size)) == null) {
                 swap(itemMap, getX() + size, getY() + size);
                 return true;
             }
-            if (itemMap[getX() + size][getY() + size] instanceof Water) {
+            if (itemMap.get(new Coordinates(getX() + size, getY() + size)) instanceof Water) {
                 swap(itemMap, getX() + size, getY() + size);
                 return true;
             }
@@ -41,14 +42,14 @@ public class Sand extends Element implements Solid, Movable {
         return false;
     }
 
-    public boolean moveDown(Element[][] itemMap) {
+    public boolean moveDown(Map<Coordinates, Element> itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX(), getY() + size)) {
-            if (itemMap[getX()][getY() + size] == null) {
+            if (itemMap.get(new Coordinates(getX(), getY() + size)) == null) {
                 swap(itemMap, getX(), getY() + size);
                 return true;
             }
-            if (itemMap[getX()][getY() + size] instanceof Water) {
+            if (itemMap.get(new Coordinates(getX(), getY() + size)) instanceof Water) {
                 swap(itemMap, getX(), getY() + size);
                 return true;
             }
@@ -57,7 +58,7 @@ public class Sand extends Element implements Solid, Movable {
     }
 
 
-    public void applyGravity(Element[][] itemMap) {
+    public void applyGravity(Map<Coordinates, Element> itemMap) {
         if (!moveDown(itemMap)) {
             if (new Random().nextBoolean()) {
                 if (!moveLeftDown(itemMap))

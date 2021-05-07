@@ -2,6 +2,8 @@ package project.model;
 
 import javafx.scene.paint.Paint;
 
+import java.util.Map;
+
 public abstract class Element {
     private Coordinates coors;
     protected boolean toRemove = false;
@@ -41,21 +43,27 @@ public abstract class Element {
             return false;
     }
 
-    public void swap(Element[][] itemMap, int x, int y) {
-        Element tmp = itemMap[x][y];
-        itemMap[x][y] = this;
-        itemMap[getX()][getY()] = tmp;
+    public void swap(Map<Coordinates, Element> itemMap, int x, int y) {
+        Element tmpStart = itemMap.remove(this.getCoors());
+        Element tmpFinish = itemMap.remove(new Coordinates(x, y));
 
-        if (tmp != null) {
-            tmp.setX(getX());
-            tmp.setY(getY());
+        if (tmpStart == null)
+            return;
+
+        if (tmpFinish != null) {
+            tmpFinish.setX(tmpStart.getX());
+            tmpFinish.setY(tmpStart.getY());
         }
 
-        setX(x);
-        setY(y);
+        tmpStart.setX(x);
+        tmpStart.setY(y);
+
+        if (tmpFinish != null)
+            itemMap.put(tmpFinish.getCoors(), tmpFinish);
+        itemMap.put(tmpStart.getCoors(), tmpStart);
     }
 
-    public abstract void applyGravity(Element[][] itemMap);
+    public abstract void applyGravity(Map<Coordinates, Element> itemMap);
 
     public abstract Paint getTexture();
 }
