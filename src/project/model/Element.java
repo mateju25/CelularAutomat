@@ -50,7 +50,7 @@ public abstract class Element {
         setY(y);
     }
 
-    public abstract void applyGravity(Element[][] itemMap);
+    public abstract boolean applyGravity(Element[][] itemMap);
 
     public abstract Paint getTexture();
 }

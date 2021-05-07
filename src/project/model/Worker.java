@@ -1,6 +1,7 @@
 package project.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,10 +38,12 @@ public class Worker {
     }
 
     public void addPoint(Element item) {
-        if (item.getX() >= 0 && item.getX() <= Worker.getInstance().getMaxWidth() && item.getY() >= 0 && item.getY() <= Worker.getInstance().getMaxHeight()) {
-            if (!items.containsKey(item.getCoors())) {
-                items.put(item.getCoors(), item);
-                itemMap[item.getCoors().getX()][item.getCoors().getY()] = item;
+        synchronized (this) {
+            if (item.getX() >= 0 && item.getX() <= Worker.getInstance().getMaxWidth() && item.getY() >= 0 && item.getY() <= Worker.getInstance().getMaxHeight()) {
+                if (!items.containsKey(item.getCoors())) {
+                    items.put(item.getCoors(), item);
+                    itemMap[item.getCoors().getX()][item.getCoors().getY()] = item;
+                }
             }
         }
     }
@@ -62,9 +65,21 @@ public class Worker {
     }
 
     public void applyGravity() {
-        for (Element item :
-                items.values()) {
-            item.applyGravity(itemMap);
+        synchronized (this) {
+            Map<Coordinates, Element> tmp = new ConcurrentHashMap<>();
+            for (Element item : items.values()) {
+                if (item instanceof Movable) {
+                    if (!item.applyGravity(itemMap)) {
+                        itemMap[item.getX()][item.getY()] = null;
+                    } else {
+                        tmp.put(item.getCoors(), item);
+                    }
+                } else {
+                    tmp.put(item.getCoors(), item);
+                }
+            }
+            items.clear();
+            items = tmp;
         }
     }
 

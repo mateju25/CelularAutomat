@@ -10,6 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import project.model.*;
 
+import java.util.Random;
+
 import static java.lang.Thread.sleep;
 import static javafx.scene.paint.Color.rgb;
 
@@ -56,15 +58,21 @@ public class Controller {
         }
     }
 
+    private void createPoint(int x, int y) {
+        switch (mode) {
+            case 1: worker.addPoint(new Sand(new Coordinates(x, y))); break;
+            case 2: worker.addPoint(new Water(new Coordinates(x, y))); break;
+            case 3: worker.addPoint(new Wall(new Coordinates(x, y))); break;
+            case 4: worker.addPoint(new Vapor(new Coordinates((int) (x + new Random().nextDouble()*9 - 3), (int) (y+ new Random().nextDouble()*9 - 3)))); break;
+        }
+    }
+
     public void addPoint(MouseEvent mouseEvent) throws InterruptedException {
         cancelTimer(mouseEvent);
 
         int x = (int) ((mouseEvent.getX()) / size) * size;
         int y = (int) ((mouseEvent.getY()) / size) * size;
-        switch (mode) {
-            case 1: worker.addPoint(new Sand(new Coordinates(x, y))); break;
-            case 2: worker.addPoint(new Water(new Coordinates(x, y))); break;
-        }
+        createPoint(x, y);
     }
 
     public void moreFunc(KeyEvent keyEvent) {
@@ -79,6 +87,14 @@ public class Controller {
             mode = 2;
             textMode.setText("2");
         }
+        if (keyEvent.getCode().getName().equals("Numpad 3")) {
+            mode = 3;
+            textMode.setText("3");
+        }
+        if (keyEvent.getCode().getName().equals("Numpad 4")) {
+            mode = 4;
+            textMode.setText("4");
+        }
     }
 
     private Thread timer = null;
@@ -91,10 +107,7 @@ public class Controller {
                 while (stop) {
                     int x = (int) ((mouseEvent.getX()) / size) * size;
                     int y = (int) ((mouseEvent.getY()) / size) * size;
-                    switch (mode) {
-                        case 1: worker.addPoint(new Sand(new Coordinates(x, y))); break;
-                        case 2: worker.addPoint(new Water(new Coordinates(x, y))); break;
-                    }
+                    createPoint(x, y);
                     try {
                         sleep(10);
                     } catch (InterruptedException e) {

@@ -6,7 +6,7 @@ import java.util.Random;
 
 import static javafx.scene.paint.Color.rgb;
 
-public class Water extends Element implements Liquid{
+public class Water extends Element implements Liquid, Movable{
     public Water(Coordinates coors) {
         super(coors);
     }
@@ -38,7 +38,7 @@ public class Water extends Element implements Liquid{
         return false;
     }
 
-    public void applyGravity(Element[][] itemMap) {
+    public boolean applyGravity(Element[][] itemMap) {
         if (!moveDown(itemMap)) {
             if (new Random().nextBoolean()) {
                 if (!moveLeft(itemMap))
@@ -48,6 +48,7 @@ public class Water extends Element implements Liquid{
                     moveLeft(itemMap);
             }
         }
+        return true;
     }
 
     @Override

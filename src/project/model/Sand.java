@@ -6,7 +6,7 @@ import java.util.Random;
 
 import static javafx.scene.paint.Color.rgb;
 
-public class Sand extends Element implements Solid{
+public class Sand extends Element implements Solid, Movable {
     public Sand(Coordinates coors) {
         super(coors);
     }
@@ -57,10 +57,7 @@ public class Sand extends Element implements Solid{
     }
 
 
-    public void applyGravity(Element[][] itemMap) {
-        int size = Worker.getInstance().getSize();
-        if (!checkCoors(getX(), getY() + size))
-            return;
+    public boolean applyGravity(Element[][] itemMap) {
         if (!moveDown(itemMap)) {
             if (new Random().nextBoolean()) {
                 if (!moveLeftDown(itemMap))
@@ -70,6 +67,7 @@ public class Sand extends Element implements Solid{
                     moveLeftDown(itemMap);
             }
         }
+        return true;
     }
 
     @Override
