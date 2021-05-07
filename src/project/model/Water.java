@@ -14,9 +14,7 @@ public class Water extends Element implements Liquid{
     public boolean moveLeft(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() - size, getY()) && itemMap[getX() - size][getY()] == null) {
-            itemMap[getX()][getY()] = null;
-            setX(getX() - size);
-            itemMap[getX()][getY()] = this;
+            swap(itemMap, getX() - size, getY());
             return true;
         }
         return false;
@@ -25,9 +23,7 @@ public class Water extends Element implements Liquid{
     public boolean moveRight(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() + size, getY()) && itemMap[getX() + size][getY()] == null) {
-            itemMap[getX()][getY()] = null;
-            setX(getX() + size);
-            itemMap[getX()][getY()] = this;
+            swap(itemMap, getX() + size, getY());
             return true;
         }
         return false;
@@ -36,9 +32,7 @@ public class Water extends Element implements Liquid{
     public boolean moveDown(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX(), getY() + size) && itemMap[getX()][getY() + size] == null) {
-            itemMap[getX()][getY()] = null;
-            setY(getY() + size);
-            itemMap[getX()][getY()] = this;
+            swap(itemMap, getX(), getY() + size);
             return true;
         }
         return false;

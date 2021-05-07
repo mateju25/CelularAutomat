@@ -36,6 +36,20 @@ public abstract class Element {
             return false;
     }
 
+    public void swap(Element[][] itemMap, int x, int y) {
+        Element tmp = itemMap[x][y];
+        itemMap[x][y] = this;
+        itemMap[getX()][getY()] = tmp;
+
+        if (tmp != null) {
+            tmp.setX(getX());
+            tmp.setY(getY());
+        }
+
+        setX(x);
+        setY(y);
+    }
+
     public abstract void applyGravity(Element[][] itemMap);
 
     public abstract Paint getTexture();

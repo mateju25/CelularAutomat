@@ -13,35 +13,45 @@ public class Sand extends Element implements Solid{
 
     public boolean moveLeftDown(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
-        if (checkCoors(getX() - size, getY() + size) && itemMap[getX() - size][getY() + size] == null) {
-                itemMap[getX()][getY()] = null;
-                setX(getX() - size);
-                setY(getY() + size);
-                itemMap[getX()][getY()] = this;
-            return true;
+        if (checkCoors(getX() - size, getY() + size)) {
+            if (itemMap[getX() - size][getY() + size] == null) {
+                swap(itemMap, getX() - size, getY() + size);
+                return true;
+            }
+            if (itemMap[getX() - size][getY() + size] instanceof Water) {
+                swap(itemMap, getX() - size, getY() + size);
+                return true;
+            }
         }
         return false;
     }
 
     public boolean moveRightDown(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
-        if (checkCoors(getX() + size, getY() + size) && itemMap[getX() + size][getY() + size] == null) {
-                itemMap[getX()][getY()] = null;
-                setX(getX() + size);
-                setY(getY() + size);
-                itemMap[getX()][getY()] = this;
-            return true;
+        if (checkCoors(getX() + size, getY() + size)) {
+            if (itemMap[getX() + size][getY() + size] == null) {
+                swap(itemMap, getX() + size, getY() + size);
+                return true;
+            }
+            if (itemMap[getX() + size][getY() + size] instanceof Water) {
+                swap(itemMap, getX() + size, getY() + size);
+                return true;
+            }
         }
         return false;
     }
 
     public boolean moveDown(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
-        if (checkCoors(getX(), getY() + size) && itemMap[getX()][getY() + size] == null) {
-            itemMap[getX()][getY()] = null;
-            setY(getY() + size);
-            itemMap[getX()][getY()] = this;
-            return true;
+        if (checkCoors(getX(), getY() + size)) {
+            if (itemMap[getX()][getY() + size] == null) {
+                swap(itemMap, getX(), getY() + size);
+                return true;
+            }
+            if (itemMap[getX()][getY() + size] instanceof Water) {
+                swap(itemMap, getX(), getY() + size);
+                return true;
+            }
         }
         return false;
     }
