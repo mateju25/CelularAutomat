@@ -1,5 +1,7 @@
 package project.model;
 
+import javafx.scene.paint.Paint;
+
 public abstract class Element {
     private Coordinates coors;
 
@@ -35,4 +37,6 @@ public abstract class Element {
     }
 
     public abstract void applyGravity(Element[][] itemMap);
+
+    public abstract Paint getTexture();
 }

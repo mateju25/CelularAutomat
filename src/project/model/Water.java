@@ -1,13 +1,17 @@
 package project.model;
 
+import javafx.scene.paint.Paint;
+
 import java.util.Random;
 
-public class Water extends Element{
+import static javafx.scene.paint.Color.rgb;
+
+public class Water extends Element implements Liquid{
     public Water(Coordinates coors) {
         super(coors);
     }
 
-    private boolean moveLeft(Element[][] itemMap) {
+    public boolean moveLeft(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() - size, getY()) && itemMap[getX() - size][getY()] == null) {
             itemMap[getX()][getY()] = null;
@@ -18,7 +22,7 @@ public class Water extends Element{
         return false;
     }
 
-    private boolean moveRight(Element[][] itemMap) {
+    public boolean moveRight(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() + size, getY()) && itemMap[getX() + size][getY()] == null) {
             itemMap[getX()][getY()] = null;
@@ -29,15 +33,19 @@ public class Water extends Element{
         return false;
     }
 
-    public void applyGravity(Element[][] itemMap) {
+    public boolean moveDown(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
-        if (!checkCoors(getX(), getY() + size))
-            return;
-        if (itemMap[getX()][getY() + size] == null) {
+        if (checkCoors(getX(), getY() + size) && itemMap[getX()][getY() + size] == null) {
             itemMap[getX()][getY()] = null;
             setY(getY() + size);
             itemMap[getX()][getY()] = this;
-        } else {
+            return true;
+        }
+        return false;
+    }
+
+    public void applyGravity(Element[][] itemMap) {
+        if (!moveDown(itemMap)) {
             if (new Random().nextBoolean()) {
                 if (!moveLeft(itemMap))
                     moveRight(itemMap);
@@ -46,5 +54,10 @@ public class Water extends Element{
                     moveLeft(itemMap);
             }
         }
+    }
+
+    @Override
+    public Paint getTexture() {
+        return rgb(0, 55, 255);
     }
 }
