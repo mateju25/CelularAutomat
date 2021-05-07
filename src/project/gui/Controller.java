@@ -17,6 +17,9 @@ import project.model.solid.Sand;
 import project.model.solid.Wall;
 
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static java.lang.Thread.sleep;
 import static javafx.scene.paint.Color.rgb;
@@ -60,11 +63,24 @@ public class Controller {
     public void refreshPoints() {
         gc.setFill(rgb(0, 0, 0));
         gc.fillRect(0, 0, canvas.getWidth(),  canvas.getHeight());
-        textNumElements.setText(String.valueOf(((long) worker.getItems().values().size())));
-        for (Element item : worker.getItems().values()) {
-            gc.setFill(item.getTexture());
-            gc.fillRect(item.getCoors().getX()-size/2, item.getCoors().getY()-size/2, size, size);
+        for (Chunk chunk : worker.getChunks().values()) {
+            gc.setFill(rgb(75, 0, 0));
+            Coordinates item = chunk.getItems().entrySet().stream().findFirst().get().getValue().getCoors();
+            gc.fillRect(item.getX()/worker.getChunkSize() * worker.getChunkSize(), item.getY()/worker.getChunkSize() * worker.getChunkSize(), worker.getChunkSize(),  worker.getChunkSize());
         }
+
+//        ExecutorService executor = Executors.newWorkStealingPool(2);
+        for (Chunk chunk : worker.getChunks().values()) {
+//            executor.execute(() -> {
+                for (Element item : chunk.getItems().values()) {
+                    synchronized (this) {
+                        gc.setFill(item.getTexture());
+                        gc.fillRect(item.getCoors().getX() - size / 2, item.getCoors().getY() - size / 2, size, size);
+                    }
+                }
+//            });
+        }
+//        executor.shutdown();
     }
 
     private void createPoint(int x, int y) {

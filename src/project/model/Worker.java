@@ -14,18 +14,31 @@ public class Worker {
     private static Worker single_instance = null;
 
     private  Map<Coordinates, Chunk> chunks = new ConcurrentHashMap<>();
-    private  Map<Coordinates, Element> items = new ConcurrentHashMap<>();
 
     public Element getElement(Coordinates coors) {
-        return items.get(coors);
+        if (chunks.containsKey(new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize)))
+            return chunks.get(new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize)).getItems().get(coors);
+        return null;
     }
 
     public Element removeElement(Coordinates coors) {
-        return items.remove(coors);
+        if (chunks.containsKey(new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize))) {
+            Element tmp = chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().remove(coors);
+            if (chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().size() == 0)
+                chunks.remove(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize));
+            return tmp;
+        }
+        return null;
     }
 
     public void addElement(Coordinates coors, Element newElement) {
-        items.put(coors, newElement);
+        if (chunks.containsKey(new Coordinates(coors.getX()/chunkSize, coors.getY() / chunkSize))) {
+            if (!chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().containsKey(coors))
+                chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().put(coors, newElement);
+        } else {
+            chunks.put(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize), new Chunk());
+            chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().put(coors, newElement);
+        }
     }
 
     private  Worker(int maxHeight, int maxWidth, int size) {
@@ -53,9 +66,7 @@ public class Worker {
     public void addPoint(Element item) {
         synchronized (this) {
             if (item.getX() >= 0 && item.getX() <= Worker.getInstance().getMaxWidth() && item.getY() >= 0 && item.getY() <= Worker.getInstance().getMaxHeight()) {
-                if (!items.containsKey(item.getCoors())) {
-                    addElement(item.getCoors(), item);
-                }
+                addElement(item.getCoors(), item);
             }
         }
     }
@@ -66,10 +77,6 @@ public class Worker {
                 removeElement(new Coordinates(x, y));
             }
         }
-    }
-
-    public Map<Coordinates, Element> getItems() {
-        return items;
     }
 
     public int getMaxHeight() {
@@ -84,20 +91,30 @@ public class Worker {
         return size;
     }
 
+    public Map<Coordinates, Chunk> getChunks() {
+        return chunks;
+    }
+
+    public int getChunkSize() {
+        return chunkSize;
+    }
+
     public void applyGravity() {
         synchronized (this) {
-            for (Element item : new ConcurrentHashMap<>(items).values()) {
-                if (item instanceof Movable) {
-                    item.applyGravity();
-                } else {
-                    if (item instanceof Generator)
-                        ((Generator) item).generateElements();
+            for (Chunk chunk : new ConcurrentHashMap<>(chunks).values()) {
+                for (Element item : new ConcurrentHashMap<>(chunk.getItems()).values()) {
+                    if (item instanceof Movable) {
+                        item.applyGravity();
+                    } else {
+                        if (item instanceof Generator)
+                            ((Generator) item).generateElements();
+                    }
                 }
             }
         }
     }
 
     public void clearPoints() {
-        items.clear();
+        chunks.clear();
     }
 }
