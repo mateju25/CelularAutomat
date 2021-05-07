@@ -57,7 +57,7 @@ public class Sand extends Element implements Solid, Movable {
     }
 
 
-    public boolean applyGravity(Element[][] itemMap) {
+    public void applyGravity(Element[][] itemMap) {
         if (!moveDown(itemMap)) {
             if (new Random().nextBoolean()) {
                 if (!moveLeftDown(itemMap))
@@ -67,7 +67,6 @@ public class Sand extends Element implements Solid, Movable {
                     moveLeftDown(itemMap);
             }
         }
-        return true;
     }
 
     @Override

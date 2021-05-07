@@ -64,6 +64,7 @@ public class Controller {
             case 2: worker.addPoint(new Water(new Coordinates(x, y))); break;
             case 3: worker.addPoint(new Wall(new Coordinates(x, y))); break;
             case 4: worker.addPoint(new Vapor(new Coordinates((int) (x + new Random().nextDouble()*9 - 3), (int) (y+ new Random().nextDouble()*9 - 3)))); break;
+            case 5: worker.addPoint(new Magma(new Coordinates(x, y))); break;
         }
     }
 
@@ -94,6 +95,10 @@ public class Controller {
         if (keyEvent.getCode().getName().equals("Numpad 4")) {
             mode = 4;
             textMode.setText("4");
+        }
+        if (keyEvent.getCode().getName().equals("Numpad 5")) {
+            mode = 5;
+            textMode.setText("5");
         }
     }
 

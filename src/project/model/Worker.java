@@ -69,16 +69,14 @@ public class Worker {
             Map<Coordinates, Element> tmp = new ConcurrentHashMap<>();
             for (Element item : items.values()) {
                 if (item instanceof Movable) {
-                    if (!item.applyGravity(itemMap)) {
-                        itemMap[item.getX()][item.getY()] = null;
-                    } else {
+                    if (!item.isToRemove()) {
+                        item.applyGravity(itemMap);
                         tmp.put(item.getCoors(), item);
                     }
                 } else {
                     tmp.put(item.getCoors(), item);
                 }
             }
-            items.clear();
             items = tmp;
         }
     }

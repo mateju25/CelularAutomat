@@ -4,6 +4,11 @@ import javafx.scene.paint.Paint;
 
 public abstract class Element {
     private Coordinates coors;
+    protected boolean toRemove = false;
+
+    public boolean isToRemove() {
+        return toRemove;
+    }
 
     public Element(Coordinates coors) {
         this.coors = coors;
@@ -50,7 +55,7 @@ public abstract class Element {
         setY(y);
     }
 
-    public abstract boolean applyGravity(Element[][] itemMap);
+    public abstract void applyGravity(Element[][] itemMap);
 
     public abstract Paint getTexture();
 }

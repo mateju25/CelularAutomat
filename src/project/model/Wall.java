@@ -10,8 +10,7 @@ public class Wall extends Element implements Immovable{
     }
 
     @Override
-    public boolean applyGravity(Element[][] itemMap) {
-        return true;
+    public void applyGravity(Element[][] itemMap) {
     }
 
     @Override

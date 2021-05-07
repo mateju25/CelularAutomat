@@ -11,6 +11,7 @@ public class Water extends Element implements Liquid, Movable{
         super(coors);
     }
 
+    @Override
     public boolean moveLeft(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() - size, getY()) && itemMap[getX() - size][getY()] == null) {
@@ -20,6 +21,7 @@ public class Water extends Element implements Liquid, Movable{
         return false;
     }
 
+    @Override
     public boolean moveRight(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() + size, getY()) && itemMap[getX() + size][getY()] == null) {
@@ -29,16 +31,27 @@ public class Water extends Element implements Liquid, Movable{
         return false;
     }
 
+    @Override
     public boolean moveDown(Element[][] itemMap) {
         int size = Worker.getInstance().getSize();
-        if (checkCoors(getX(), getY() + size) && itemMap[getX()][getY() + size] == null) {
-            swap(itemMap, getX(), getY() + size);
-            return true;
+        if (checkCoors(getX(), getY() + size)) {
+            if (itemMap[getX()][getY() + size] == null) {
+                swap(itemMap, getX(), getY() + size);
+                return true;
+            }
+            if (itemMap[getX()][getY() + size] instanceof Magma) {
+                this.toRemove = true;
+                Element vapor = new Vapor(new Coordinates(getX(), getY()));
+                Worker.getInstance().getItems().put(vapor.getCoors(), vapor);
+                itemMap[getX()][getY()] = vapor;
+                return true;
+            }
         }
         return false;
     }
 
-    public boolean applyGravity(Element[][] itemMap) {
+    @Override
+    public void applyGravity(Element[][] itemMap) {
         if (!moveDown(itemMap)) {
             if (new Random().nextBoolean()) {
                 if (!moveLeft(itemMap))
@@ -48,7 +61,6 @@ public class Water extends Element implements Liquid, Movable{
                     moveLeft(itemMap);
             }
         }
-        return true;
     }
 
     @Override

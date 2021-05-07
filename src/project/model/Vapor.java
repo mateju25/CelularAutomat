@@ -13,9 +13,9 @@ public class Vapor extends Element implements Movable, Gas{
     }
 
     @Override
-    public boolean applyGravity(Element[][] itemMap) {
+    public void applyGravity(Element[][] itemMap) {
         if (energy <= 0) {
-            return false;
+            this.toRemove= true;
         }
         if (!moveUp(itemMap)) {
             if (new Random().nextBoolean()) {
@@ -26,7 +26,6 @@ public class Vapor extends Element implements Movable, Gas{
                     moveLeft(itemMap);
             }
         }
-        return true;
     }
 
     @Override
