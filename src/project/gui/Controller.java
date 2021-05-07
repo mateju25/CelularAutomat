@@ -19,10 +19,12 @@ public class Controller {
     public Canvas canvas;
     public Pane pane;
     public Label textMode;
+    public Label textNumElements;
 
     private GraphicsContext gc;
 
-    private int size = 3;
+    private int size = 2;
+    private int load = 2;
     private int mode = 1;
     private Worker worker;
 
@@ -52,6 +54,7 @@ public class Controller {
     public void refreshPoints() {
         gc.setFill(rgb(0, 0, 0));
         gc.fillRect(0, 0, canvas.getWidth(),  canvas.getHeight());
+        textNumElements.setText(String.valueOf(((long) worker.getItems().values().size())));
         for (Element item : worker.getItems().values()) {
             gc.setFill(item.getTexture());
             gc.fillRect(item.getCoors().getX()-size/2, item.getCoors().getY()-size/2, size, size);
@@ -59,15 +62,32 @@ public class Controller {
     }
 
     private void createPoint(int x, int y) {
-        switch (mode) {
-            case 1: worker.addPoint(new Sand(new Coordinates(x, y))); break;
-            case 2: worker.addPoint(new Water(new Coordinates(x, y))); break;
-            case 3: worker.addPoint(new Wall(new Coordinates(x, y))); break;
-            case 4: worker.addPoint(new Vapor(new Coordinates((int) (x + new Random().nextDouble()*9 - 3), (int) (y+ new Random().nextDouble()*9 - 3)))); break;
-            case 5: worker.addPoint(new Magma(new Coordinates(x, y))); break;
-            case 8: worker.addPoint(new MagmaGenerator(new Coordinates(x, y))); break;
-            case 9: worker.addPoint(new WaterGenerator(new Coordinates(x, y))); break;
+        for (int i = 0; i < load; i++) {
+            for (int j = 0; j < load; j++) {
+                x = x + i*size;
+                y = y + j*size;
+                switch (mode) {
+                    case 1: worker.addPoint(new Sand(new Coordinates(x, y))); break;
+                    case 2: worker.addPoint(new Water(new Coordinates(x, y))); break;
+                    case 3: worker.addPoint(new Wall(new Coordinates(x, y))); break;
+                    case 4: worker.addPoint(new Vapor(new Coordinates((int) (x + new Random().nextDouble()*9 - 3), (int) (y+ new Random().nextDouble()*9 - 3)))); break;
+                    case 5: worker.addPoint(new Magma(new Coordinates(x, y))); break;
+                    case 8: worker.addPoint(new MagmaGenerator(new Coordinates(x, y))); break;
+                    case 9: worker.addPoint(new WaterGenerator(new Coordinates(x, y))); break;
+                }
+                x = x - i*size;
+                y = y - j*size;
+            }
         }
+//        switch (mode) {
+//            case 1: worker.addPoint(new Sand(new Coordinates(x, y))); break;
+//            case 2: worker.addPoint(new Water(new Coordinates(x, y))); break;
+//            case 3: worker.addPoint(new Wall(new Coordinates(x, y))); break;
+//            case 4: worker.addPoint(new Vapor(new Coordinates((int) (x + new Random().nextDouble()*9 - 3), (int) (y+ new Random().nextDouble()*9 - 3)))); break;
+//            case 5: worker.addPoint(new Magma(new Coordinates(x, y))); break;
+//            case 8: worker.addPoint(new MagmaGenerator(new Coordinates(x, y))); break;
+//            case 9: worker.addPoint(new WaterGenerator(new Coordinates(x, y))); break;
+//        }
     }
 
     public void addPoint(MouseEvent mouseEvent) throws InterruptedException {

@@ -2,7 +2,6 @@ package project.model;
 
 import javafx.scene.paint.Paint;
 
-import java.util.Map;
 import java.util.Random;
 
 import static javafx.scene.paint.Color.rgb;
@@ -13,17 +12,17 @@ public class Water extends Element implements Liquid, Movable{
     }
 
     @Override
-    public boolean moveLeft(Map<Coordinates, Element> itemMap) {
+    public boolean moveLeft() {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() - size, getY())) {
-            if (itemMap.get(new Coordinates(getX() - size, getY())) == null) {
-                swap(itemMap, getX() - size, getY());
+            if (Worker.getInstance().getElement(new Coordinates(getX() - size, getY())) == null) {
+                swap( getX() - size, getY());
                 return true;
             }
-            if (itemMap.get(new Coordinates(getX() + size, getY())) instanceof Magma) {
-                this.toRemove = true;
+            if (Worker.getInstance().getElement(new Coordinates(getX() - size, getY())) instanceof Magma) {
+                Worker.getInstance().removeElement(getCoors());
                 Element vapor = new Vapor(new Coordinates(getX(), getY()));
-                Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
+                Worker.getInstance().addElement(vapor.getCoors(), vapor);
                 return true;
             }
         }
@@ -31,18 +30,18 @@ public class Water extends Element implements Liquid, Movable{
     }
 
     @Override
-    public boolean moveRight(Map<Coordinates, Element> itemMap) {
+    public boolean moveRight() {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() + size, getY()) ) {
-            if (itemMap.get(new Coordinates(getX() + size, getY())) == null) {
-                swap(itemMap, getX() + size, getY());
+            if (Worker.getInstance().getElement(new Coordinates(getX() + size, getY())) == null) {
+                swap( getX() + size, getY());
                 return true;
             }
 
-            if (itemMap.get(new Coordinates(getX() + size, getY())) instanceof Magma) {
-                this.toRemove = true;
+            if (Worker.getInstance().getElement(new Coordinates(getX() + size, getY())) instanceof Magma) {
+                Worker.getInstance().removeElement(getCoors());
                 Element vapor = new Vapor(new Coordinates(getX(), getY()));
-                Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
+                Worker.getInstance().addElement(vapor.getCoors(), vapor);
                 return true;
             }
         }
@@ -50,17 +49,17 @@ public class Water extends Element implements Liquid, Movable{
     }
 
     @Override
-    public boolean moveDown(Map<Coordinates, Element> itemMap) {
+    public boolean moveDown() {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX(), getY() + size)) {
-            if (itemMap.get(new Coordinates(getX() , getY() + size)) == null) {
-                swap(itemMap, getX(), getY() + size);
+            if (Worker.getInstance().getElement(new Coordinates(getX() , getY() + size)) == null) {
+                swap( getX(), getY() + size);
                 return true;
             }
-            if (itemMap.get(new Coordinates(getX() , getY() + size)) instanceof Magma) {
-                this.toRemove = true;
+            if (Worker.getInstance().getElement(new Coordinates(getX() , getY() + size)) instanceof Magma) {
+                Worker.getInstance().removeElement(getCoors());
                 Element vapor = new Vapor(new Coordinates(getX(), getY()));
-                Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
+                Worker.getInstance().addElement(vapor.getCoors(), vapor);
                 return true;
             }
         }
@@ -68,14 +67,14 @@ public class Water extends Element implements Liquid, Movable{
     }
 
     @Override
-    public void applyGravity(Map<Coordinates, Element> itemMap) {
-        if (!moveDown(itemMap)) {
+    public void applyGravity() {
+        if (!moveDown()) {
             if (new Random().nextBoolean()) {
-                if (!moveLeft(itemMap))
-                    moveRight(itemMap);
+                if (!moveLeft())
+                    moveRight();
             } else {
-                if (!moveRight(itemMap))
-                    moveLeft(itemMap);
+                if (!moveRight())
+                    moveLeft();
             }
         }
     }

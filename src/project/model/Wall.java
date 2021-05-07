@@ -12,7 +12,7 @@ public class Wall extends Element implements Immovable{
     }
 
     @Override
-    public void applyGravity(Map<Coordinates, Element> itemMap) {
+    public void applyGravity() {
     }
 
     @Override

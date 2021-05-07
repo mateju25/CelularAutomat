@@ -8,23 +8,23 @@ import java.util.Random;
 import static javafx.scene.paint.Color.rgb;
 
 public class Vapor extends Element implements Movable, Gas{
-    private int energy = 35 + new Random().nextInt() % 10;
+    private int energy = 35 + new Random().nextInt() % 20;
     public Vapor(Coordinates coors) {
         super(coors);
     }
 
     @Override
-    public void applyGravity(Map<Coordinates, Element> itemMap) {
+    public void applyGravity() {
         if (energy <= 0) {
-            this.toRemove= true;
+            Worker.getInstance().removeElement(getCoors());
         }
-        if (!moveUp(itemMap)) {
+        if (!moveUp()) {
             if (new Random().nextBoolean()) {
-                if (!moveLeft(itemMap))
-                    moveRight(itemMap);
+                if (!moveLeft())
+                    moveRight();
             } else {
-                if (!moveRight(itemMap))
-                    moveLeft(itemMap);
+                if (!moveRight())
+                    moveLeft();
             }
         }
     }
@@ -35,16 +35,16 @@ public class Vapor extends Element implements Movable, Gas{
     }
 
     @Override
-    public boolean moveLeft(Map<Coordinates, Element> itemMap) {
+    public boolean moveLeft() {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() - size, getY())) {
             energy--;
-            if (itemMap.get(new Coordinates(getX() - size, getY())) == null) {
-                swap(itemMap, getX() - size, getY());
+            if (Worker.getInstance().getElement(new Coordinates(getX() - size, getY())) == null) {
+                swap( getX() - size, getY());
                 return true;
             }
-            if (itemMap.get(new Coordinates(getX() - size, getY())) instanceof Water) {
-                swap(itemMap, getX() - size, getY());
+            if (Worker.getInstance().getElement(new Coordinates(getX() - size, getY())) instanceof Water) {
+                swap( getX() - size, getY());
                 return true;
             }
         }
@@ -52,16 +52,16 @@ public class Vapor extends Element implements Movable, Gas{
     }
 
     @Override
-    public boolean moveRight(Map<Coordinates, Element> itemMap) {
+    public boolean moveRight() {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX() + size, getY())) {
             energy--;
-            if (itemMap.get(new Coordinates(getX() +  size, getY())) == null) {
-                swap(itemMap, getX() + size, getY());
+            if (Worker.getInstance().getElement(new Coordinates(getX() +  size, getY())) == null) {
+                swap( getX() + size, getY());
                 return true;
             }
-            if (itemMap.get(new Coordinates(getX() + size, getY())) instanceof Water) {
-                swap(itemMap, getX() + size, getY());
+            if (Worker.getInstance().getElement(new Coordinates(getX() + size, getY())) instanceof Water) {
+                swap( getX() + size, getY());
                 return true;
             }
         }
@@ -69,16 +69,16 @@ public class Vapor extends Element implements Movable, Gas{
     }
 
     @Override
-    public boolean moveUp(Map<Coordinates, Element> itemMap) {
+    public boolean moveUp() {
         int size = Worker.getInstance().getSize();
         if (checkCoors(getX(), getY() - size)) {
             energy--;
-            if (itemMap.get(new Coordinates(getX() , getY()- size)) == null) {
-                swap(itemMap, getX(), getY() - size);
+            if (Worker.getInstance().getElement(new Coordinates(getX() , getY()- size)) == null) {
+                swap( getX(), getY() - size);
                 return true;
             }
-            if (itemMap.get(new Coordinates(getX() , getY()- size)) instanceof Water) {
-                swap(itemMap, getX(), getY() - size);
+            if (Worker.getInstance().getElement(new Coordinates(getX() , getY()- size)) instanceof Water) {
+                swap( getX(), getY() - size);
                 return true;
             }
         }

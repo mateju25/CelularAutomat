@@ -12,7 +12,7 @@ public class MagmaGenerator extends Element implements Immovable, Generator {
     }
 
     @Override
-    public void applyGravity(Map<Coordinates, Element> itemMap) {
+    public void applyGravity() {
     }
 
     @Override
@@ -21,9 +21,9 @@ public class MagmaGenerator extends Element implements Immovable, Generator {
     }
 
     @Override
-    public void generateElements(Map<Coordinates, Element> itemMap) {
+    public void generateElements() {
         int size = Worker.getInstance().getSize();
         var tmp = new Coordinates(getX(), getY() + size);
-        itemMap.put(tmp, new Magma(tmp));
+        Worker.getInstance().addElement(tmp, new Magma(tmp));
     }
 }

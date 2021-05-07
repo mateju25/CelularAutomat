@@ -3,9 +3,9 @@ package project.model;
 import java.util.Map;
 
 public interface Liquid {
-    boolean moveLeft(Map<Coordinates, Element> itemMap);
+    boolean moveLeft();
 
-    boolean moveRight(Map<Coordinates, Element> itemMap);
+    boolean moveRight();
 
-    boolean moveDown(Map<Coordinates, Element> itemMap);
+    boolean moveDown();
 }

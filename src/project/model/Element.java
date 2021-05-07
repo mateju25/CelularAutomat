@@ -6,11 +6,6 @@ import java.util.Map;
 
 public abstract class Element {
     private Coordinates coors;
-    protected boolean toRemove = false;
-
-    public boolean isToRemove() {
-        return toRemove;
-    }
 
     public Element(Coordinates coors) {
         this.coors = coors;
@@ -37,15 +32,15 @@ public abstract class Element {
     }
 
     protected boolean checkCoors(int x, int y) {
-        if (x >= 0 && x <= Worker.getInstance().getMaxWidth() && y >= 0 && y <= Worker.getInstance().getMaxHeight())
+        if (x >= 0 && x <= Worker.getInstance().getMaxWidth() && y >= 0 && y <= Worker.getInstance().getMaxHeight()-1)
             return true;
         else
             return false;
     }
 
-    public void swap(Map<Coordinates, Element> itemMap, int x, int y) {
-        Element tmpStart = itemMap.remove(this.getCoors());
-        Element tmpFinish = itemMap.remove(new Coordinates(x, y));
+    public void swap(int x, int y) {
+        Element tmpStart = Worker.getInstance().removeElement(this.getCoors());
+        Element tmpFinish = Worker.getInstance().removeElement(new Coordinates(x, y));
 
         if (tmpStart == null)
             return;
@@ -59,11 +54,11 @@ public abstract class Element {
         tmpStart.setY(y);
 
         if (tmpFinish != null)
-            itemMap.put(tmpFinish.getCoors(), tmpFinish);
-        itemMap.put(tmpStart.getCoors(), tmpStart);
+            Worker.getInstance().addElement(tmpFinish.getCoors(), tmpFinish);
+        Worker.getInstance().addElement(tmpStart.getCoors(), tmpStart);
     }
 
-    public abstract void applyGravity(Map<Coordinates, Element> itemMap);
+    public abstract void applyGravity();
 
     public abstract Paint getTexture();
 }
