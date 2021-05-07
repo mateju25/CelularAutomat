@@ -1,7 +1,7 @@
 package project.model;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import project.model.generators.Generator;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
