@@ -44,7 +44,7 @@ public class Magma extends Element implements Liquid, Movable{
                 if (Worker.getInstance().getItems().get(new Coordinates(x, y)) != null) {
                     Worker.getInstance().getItems().get(new Coordinates(x, y)).toRemove = true;
                     Element vapor = new Vapor(new Coordinates(x, y));
-                    Worker.getInstance().getItems().put(vapor.getCoors(), vapor);
+                    Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
                     itemMap[x][y] = vapor;
                 }
                 return true;
@@ -68,7 +68,7 @@ public class Magma extends Element implements Liquid, Movable{
                 if (Worker.getInstance().getItems().get(new Coordinates(x, y)) != null) {
                     Worker.getInstance().getItems().get(new Coordinates(x, y)).toRemove = true;
                     Element vapor = new Vapor(new Coordinates(x, y));
-                    Worker.getInstance().getItems().put(vapor.getCoors(), vapor);
+                    Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
                     itemMap[x][y] = vapor;
                 }
                 return true;
@@ -93,7 +93,7 @@ public class Magma extends Element implements Liquid, Movable{
                 if (Worker.getInstance().getItems().get(new Coordinates(x, y)) != null) {
                     Worker.getInstance().getItems().get(new Coordinates(x, y)).toRemove = true;
                     Element vapor = new Vapor(new Coordinates(x, y));
-                    Worker.getInstance().getItems().put(vapor.getCoors(), vapor);
+                    Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
                     itemMap[x][y] = vapor;
                 }
                 return true;

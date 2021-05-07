@@ -70,10 +70,14 @@ public class Controller {
 
     public void addPoint(MouseEvent mouseEvent) throws InterruptedException {
         cancelTimer(mouseEvent);
+//        System.out.println(mouseEvent.getButton().toString());
 
         int x = (int) ((mouseEvent.getX()) / size) * size;
         int y = (int) ((mouseEvent.getY()) / size) * size;
-        createPoint(x, y);
+        if (mouseEvent.getButton().toString().equals("PRIMARY"))
+            createPoint(x, y);
+        if (mouseEvent.getButton().toString().equals("SECONDARY"))
+            worker.removePoint(x, y);
     }
 
     public void moreFunc(KeyEvent keyEvent) {
@@ -106,22 +110,24 @@ public class Controller {
     private boolean stop = true;
 
     public void startTimer(MouseEvent mouseEvent) {
-        if (timer == null) {
-            stop = true;
-            timer = new Thread(() -> {
-                while (stop) {
-                    int x = (int) ((mouseEvent.getX()) / size) * size;
-                    int y = (int) ((mouseEvent.getY()) / size) * size;
-                    createPoint(x, y);
-                    try {
-                        sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+        if (mouseEvent.getButton().toString().equals("PRIMARY")) {
+            if (timer == null) {
+                stop = true;
+                timer = new Thread(() -> {
+                    while (stop) {
+                        int x = (int) ((mouseEvent.getX()) / size) * size;
+                        int y = (int) ((mouseEvent.getY()) / size) * size;
+                        createPoint(x, y);
+                        try {
+                            sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
-            timer.setDaemon(true);
-            timer.start();
+                });
+                timer.setDaemon(true);
+                timer.start();
+            }
         }
     }
 

@@ -16,6 +16,7 @@ public class Vapor extends Element implements Movable, Gas{
     public void applyGravity(Element[][] itemMap) {
         if (energy <= 0) {
             this.toRemove= true;
+            itemMap[getX()][getY()] = null;
         }
         if (!moveUp(itemMap)) {
             if (new Random().nextBoolean()) {

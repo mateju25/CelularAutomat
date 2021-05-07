@@ -42,7 +42,7 @@ public class Water extends Element implements Liquid, Movable{
             if (itemMap[getX()][getY() + size] instanceof Magma) {
                 this.toRemove = true;
                 Element vapor = new Vapor(new Coordinates(getX(), getY()));
-                Worker.getInstance().getItems().put(vapor.getCoors(), vapor);
+                Worker.getInstance().getCreatedItems().put(vapor.getCoors(), vapor);
                 itemMap[getX()][getY()] = vapor;
                 return true;
             }

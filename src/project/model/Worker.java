@@ -14,6 +14,7 @@ public class Worker {
 
     private Element[][] itemMap = new Element[10000][10000];
     private  Map<Coordinates, Element> items = new ConcurrentHashMap<>();
+    private  Map<Coordinates, Element> createdItems = new ConcurrentHashMap<>();
 
     private  Worker(int maxHeight, int maxWidth, int size) {
         this.maxHeight = maxHeight;
@@ -48,8 +49,23 @@ public class Worker {
         }
     }
 
+    public void removePoint(int x, int y) {
+        synchronized (this) {
+            if (x>= 0 && x <= Worker.getInstance().getMaxWidth() && y >= 0 && y <= Worker.getInstance().getMaxHeight()) {
+                if (items.containsKey(new Coordinates(x, y))) {
+                    items.remove(new Coordinates(x, y));
+                }
+                itemMap[x][y] = null;
+            }
+        }
+    }
+
     public Map<Coordinates, Element> getItems() {
         return items;
+    }
+
+    public Map<Coordinates, Element> getCreatedItems() {
+        return createdItems;
     }
 
     public int getMaxHeight() {
@@ -66,6 +82,7 @@ public class Worker {
 
     public void applyGravity() {
         synchronized (this) {
+            createdItems = new ConcurrentHashMap<>();
             Map<Coordinates, Element> tmp = new ConcurrentHashMap<>();
             for (Element item : items.values()) {
                 if (item instanceof Movable) {
@@ -78,6 +95,7 @@ public class Worker {
                 }
             }
             items = tmp;
+            items.putAll(createdItems);
         }
     }
 
