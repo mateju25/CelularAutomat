@@ -81,6 +81,9 @@ public class Worker {
             for (Element item : new ConcurrentHashMap<>(items).values()) {
                 if (item instanceof Movable) {
                     item.applyGravity(items);
+                } else {
+                    if (item instanceof Generator)
+                        ((Generator) item).generateElements(items);
                 }
             }
 
