@@ -1,8 +1,12 @@
-package project.model;
+package project.model.solid;
 
 import javafx.scene.paint.Paint;
+import project.model.Coordinates;
+import project.model.Element;
+import project.model.Movable;
+import project.model.Worker;
+import project.model.liquid.Water;
 
-import java.util.Map;
 import java.util.Random;
 
 import static javafx.scene.paint.Color.rgb;

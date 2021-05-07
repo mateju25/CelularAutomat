@@ -1,4 +1,4 @@
-package project.model;
+package project.model.liquid;
 
 import java.util.Map;
 

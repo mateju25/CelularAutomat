@@ -1,4 +1,4 @@
-package project.model;
+package project.model.generators;
 
 import java.util.Map;
 

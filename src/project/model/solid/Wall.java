@@ -1,12 +1,15 @@
-package project.model;
+package project.model.solid;
 
 import javafx.scene.paint.Paint;
+import project.model.Coordinates;
+import project.model.Element;
+import project.model.Immovable;
 
 import java.util.Map;
 
 import static javafx.scene.paint.Color.rgb;
 
-public class Wall extends Element implements Immovable{
+public class Wall extends Element implements Immovable {
     public Wall(Coordinates coors) {
         super(coors);
     }

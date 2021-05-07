@@ -1,4 +1,4 @@
-package project.model;
+package project.model.gas;
 
 import java.util.Map;
 

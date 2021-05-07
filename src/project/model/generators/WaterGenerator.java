@@ -1,13 +1,13 @@
-package project.model;
+package project.model.generators;
 
 import javafx.scene.paint.Paint;
-
-import java.util.Map;
+import project.model.*;
+import project.model.liquid.Water;
 
 import static javafx.scene.paint.Color.rgb;
 
-public class MagmaGenerator extends Element implements Immovable, Generator {
-    public MagmaGenerator(Coordinates coors) {
+public class WaterGenerator extends Element implements Immovable, Generator {
+    public WaterGenerator(Coordinates coors) {
         super(coors);
     }
 
@@ -24,6 +24,6 @@ public class MagmaGenerator extends Element implements Immovable, Generator {
     public void generateElements() {
         int size = Worker.getInstance().getSize();
         var tmp = new Coordinates(getX(), getY() + size);
-        Worker.getInstance().addElement(tmp, new Magma(tmp));
+        Worker.getInstance().addElement(tmp, new Water(tmp));
     }
 }

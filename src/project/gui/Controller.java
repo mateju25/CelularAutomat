@@ -7,8 +7,14 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import project.model.*;
+import project.model.gas.Vapor;
+import project.model.generators.MagmaGenerator;
+import project.model.generators.WaterGenerator;
+import project.model.liquid.Magma;
+import project.model.liquid.Water;
+import project.model.solid.Sand;
+import project.model.solid.Wall;
 
 import java.util.Random;
 

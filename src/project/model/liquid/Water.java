@@ -1,12 +1,14 @@
-package project.model;
+package project.model.liquid;
 
 import javafx.scene.paint.Paint;
+import project.model.*;
+import project.model.gas.Vapor;
 
 import java.util.Random;
 
 import static javafx.scene.paint.Color.rgb;
 
-public class Water extends Element implements Liquid, Movable{
+public class Water extends Element implements Liquid, Movable {
     public Water(Coordinates coors) {
         super(coors);
     }
