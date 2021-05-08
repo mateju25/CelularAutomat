@@ -1,12 +1,16 @@
 package project.gui;
 
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+//import javafx.scene.paint.Color;
+import java.awt.Color;
 import project.model.*;
 import project.model.gas.Vapor;
 import project.model.generators.MagmaGenerator;
@@ -16,11 +20,14 @@ import project.model.liquid.Water;
 import project.model.solid.Sand;
 import project.model.solid.Wall;
 
+import javax.imageio.ImageIO;
 import java.util.Random;
+import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static java.lang.Thread.sleep;
 import static javafx.scene.paint.Color.rgb;
 
@@ -36,6 +43,7 @@ public class Controller {
     private int load = 2;
     private int mode = 1;
     private Worker worker;
+    private javafx.embed.swing.SwingFXUtils SwingFXUtils;
 
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
@@ -63,23 +71,33 @@ public class Controller {
     public void refreshPoints() {
         gc.setFill(rgb(0, 0, 0));
         gc.fillRect(0, 0, canvas.getWidth(),  canvas.getHeight());
-        for (Chunk chunk : worker.getChunks().values()) {
-            gc.setFill(rgb(75, 0, 0));
-            Coordinates item = chunk.getItems().entrySet().stream().findFirst().get().getValue().getCoors();
-            gc.fillRect(item.getX()/worker.getChunkSize() * worker.getChunkSize(), item.getY()/worker.getChunkSize() * worker.getChunkSize(), worker.getChunkSize(),  worker.getChunkSize());
-        }
+//        for (Chunk chunk : worker.getChunks().values()) {
+//            gc.setFill(rgb(25, 0, 0));
+//            Coordinates item = chunk.getItems().entrySet().stream().findFirst().get().getValue().getCoors();
+//            gc.fillRect(item.getX()/worker.getChunkSize() * worker.getChunkSize(), item.getY()/worker.getChunkSize() * worker.getChunkSize(), worker.getChunkSize(),  worker.getChunkSize());
+//        }
 
 //        ExecutorService executor = Executors.newWorkStealingPool(2);
+        BufferedImage img = new BufferedImage((int) canvas.getWidth() + 20, (int) canvas.getHeight() + 20, TYPE_INT_RGB);
+
         for (Chunk chunk : worker.getChunks().values()) {
 //            executor.execute(() -> {
                 for (Element item : chunk.getItems().values()) {
-                    synchronized (this) {
-                        gc.setFill(item.getTexture());
-                        gc.fillRect(item.getCoors().getX() - size / 2, item.getCoors().getY() - size / 2, size, size);
+                    Color clr = Color.getHSBColor(item.getTexture()[0],item.getTexture()[1],item.getTexture()[2]);
+                    for (int i = 0; i < size; i++) {
+                        for (int j = 0; j < size; j++) {
+                            img.setRGB(item.getCoors().getX()+i, item.getCoors().getY()+j, clr.getRGB());
+                        }
                     }
+//                    synchronized (this) {
+//                        gc.setFill(item.getTexture());
+//                        gc.fillRect(item.getCoors().getX() - size / 2, item.getCoors().getY() - size / 2, size, size);
+//                    }
                 }
 //            });
         }
+        Image tempImg = SwingFXUtils.toFXImage(img, null);
+        gc.drawImage(tempImg, 0, 0);
 //        executor.shutdown();
     }
 

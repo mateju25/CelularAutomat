@@ -1,6 +1,6 @@
 package project.model.gas;
 
-import javafx.scene.paint.Paint;
+import javafx.scene.paint.Color;
 import project.model.Coordinates;
 import project.model.Element;
 import project.model.Movable;
@@ -34,8 +34,8 @@ public class Vapor extends Element implements Movable, Gas{
     }
 
     @Override
-    public Paint getTexture() {
-        return rgb(200, 200, 255);
+    public float[] getTexture() {
+        return new float[]{0.66f, 0.06f, 0.27f};
     }
 
     @Override

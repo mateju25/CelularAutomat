@@ -1,6 +1,6 @@
 package project.model.liquid;
 
-import javafx.scene.paint.Paint;
+import javafx.scene.paint.Color;
 import project.model.*;
 import project.model.gas.Vapor;
 
@@ -82,7 +82,7 @@ public class Water extends Element implements Liquid, Movable {
     }
 
     @Override
-    public Paint getTexture() {
-        return rgb(0, 55, 255);
+    public float[] getTexture() {
+        return new float[]{0.6307f, 1.0f, 1.0f};
     }
 }

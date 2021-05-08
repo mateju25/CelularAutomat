@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane fx:id="pane" prefHeight="647.0" prefWidth="1193.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.gui.Controller">
+<Pane fx:id="pane" prefHeight="647.0" prefWidth="1193.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.gui.Controller">
    <children>
       <Canvas fx:id="canvas" focusTraversable="true" height="646.0" onKeyPressed="#moreFunc" onMouseClicked="#addPoint" onMouseDragged="#addPoint" onMousePressed="#startTimer" onMouseReleased="#cancelTimer" width="1062.0" />
       <Label fx:id="textMode" focusTraversable="false" layoutX="1073.0" layoutY="23.0" prefHeight="27.0" prefWidth="67.0" text="1">
