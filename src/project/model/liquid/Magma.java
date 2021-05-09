@@ -1,6 +1,7 @@
 package project.model.liquid;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import project.model.Coordinates;
 import project.model.Element;
 import project.model.Movable;
@@ -29,8 +30,8 @@ public class Magma extends Element implements Liquid, Movable {
     }
 
     @Override
-    public float[] getTexture() {
-        return new float[]{0, 1, 1};
+    public Paint getTexture() {
+        return rgb(255, 0, 0);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package project.model;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 public abstract class Element {
     private Coordinates coors;
@@ -51,12 +52,13 @@ public abstract class Element {
         tmpStart.setX(x);
         tmpStart.setY(y);
 
-        if (tmpFinish != null)
+        if (tmpFinish != null) {
             Worker.getInstance().addElement(tmpFinish.getCoors(), tmpFinish);
+        }
         Worker.getInstance().addElement(tmpStart.getCoors(), tmpStart);
     }
 
     public abstract void applyGravity();
 
-    public abstract float[] getTexture();
+    public abstract Paint getTexture();
 }

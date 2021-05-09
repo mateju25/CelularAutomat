@@ -3,41 +3,67 @@ package project.model;
 import project.model.generators.Generator;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Worker {
     private int maxHeight;
     private int maxWidth;
     private int size;
-    private int chunkSize = 50;
+    private int chunkSize = 25;
 
     private static Worker single_instance = null;
 
     private  Map<Coordinates, Chunk> chunks = new ConcurrentHashMap<>();
 
     public Element getElement(Coordinates coors) {
-        if (chunks.containsKey(new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize)))
-            return chunks.get(new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize)).getItems().get(coors);
+        var keyCoors = new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize);
+        if (chunks.containsKey(keyCoors)) {
+            Element tmp = chunks.get(keyCoors).getItems().get(coors);
+            return tmp;
+        }
         return null;
     }
 
     public Element removeElement(Coordinates coors) {
-        if (chunks.containsKey(new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize))) {
-            Element tmp = chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().remove(coors);
-            if (chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().size() == 0)
-                chunks.remove(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize));
+        var keyCoors = new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize);
+        if (chunks.containsKey(keyCoors)) {
+            Element tmp = chunks.get(keyCoors).getItems().remove(coors);
+            if (chunks.get(keyCoors).getItems().size() == 0)
+                chunks.remove(keyCoors);
+            else
+                notifyNeighboursChunks(keyCoors);
             return tmp;
         }
         return null;
     }
 
     public void addElement(Coordinates coors, Element newElement) {
-        if (chunks.containsKey(new Coordinates(coors.getX()/chunkSize, coors.getY() / chunkSize))) {
-            if (!chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().containsKey(coors))
-                chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().put(coors, newElement);
+        var keyCoors = new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize);
+        if (chunks.containsKey(keyCoors)) {
+            if (!chunks.get(keyCoors).getItems().containsKey(coors))
+                chunks.get(keyCoors).getItems().put(coors, newElement);
         } else {
-            chunks.put(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize), new Chunk());
-            chunks.get(new Coordinates(coors.getX() / chunkSize, coors.getY() / chunkSize)).getItems().put(coors, newElement);
+            chunks.put(keyCoors, new Chunk());
+            chunks.get(keyCoors).getItems().put(coors, newElement);
+        }
+        notifyNeighboursChunks(keyCoors);
+    }
+
+    public void notifyNeighboursChunks(Coordinates coors) {
+        if (chunks.containsKey(coors))
+            chunks.get(coors).setTobeRendered(true);
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                var tmp = chunks.get(new Coordinates(coors.getX() + i, coors.getY() + j));
+                if (tmp == null)
+                    continue;
+                synchronized (tmp) {
+                    tmp.setTobeRendered(true);
+                }
+            }
         }
     }
 
@@ -101,16 +127,23 @@ public class Worker {
 
     public void applyGravity() {
         synchronized (this) {
+            ExecutorService executor = Executors.newWorkStealingPool(4);
             for (Chunk chunk : new ConcurrentHashMap<>(chunks).values()) {
-                for (Element item : new ConcurrentHashMap<>(chunk.getItems()).values()) {
-                    if (item instanceof Movable) {
-                        item.applyGravity();
-                    } else {
-                        if (item instanceof Generator)
-                            ((Generator) item).generateElements();
+                if (!chunk.getTobeRendered())
+                    continue;
+                chunk.setTobeRendered(false);
+                executor.execute(() -> {
+                    for (Element item : new ConcurrentHashMap<>(chunk.getItems()).values()) {
+                        if (item instanceof Movable) {
+                            item.applyGravity();
+                        } else {
+                            if (item instanceof Generator)
+                                ((Generator) item).generateElements();
+                        }
                     }
-                }
+                });
             }
+            executor.shutdown();
         }
     }
 

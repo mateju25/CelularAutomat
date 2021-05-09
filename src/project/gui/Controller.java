@@ -10,7 +10,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 //import javafx.scene.paint.Color;
-import java.awt.Color;
+import java.awt.*;
+
 import project.model.*;
 import project.model.gas.Vapor;
 import project.model.generators.MagmaGenerator;
@@ -29,6 +30,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static java.lang.Thread.sleep;
+import static javafx.scene.paint.Color.hsb;
 import static javafx.scene.paint.Color.rgb;
 
 public class Controller {
@@ -40,7 +42,7 @@ public class Controller {
     private GraphicsContext gc;
 
     private int size = 2;
-    private int load = 2;
+    private int load = 10;
     private int mode = 1;
     private Worker worker;
     private javafx.embed.swing.SwingFXUtils SwingFXUtils;
@@ -71,34 +73,27 @@ public class Controller {
     public void refreshPoints() {
         gc.setFill(rgb(0, 0, 0));
         gc.fillRect(0, 0, canvas.getWidth(),  canvas.getHeight());
-//        for (Chunk chunk : worker.getChunks().values()) {
-//            gc.setFill(rgb(25, 0, 0));
-//            Coordinates item = chunk.getItems().entrySet().stream().findFirst().get().getValue().getCoors();
-//            gc.fillRect(item.getX()/worker.getChunkSize() * worker.getChunkSize(), item.getY()/worker.getChunkSize() * worker.getChunkSize(), worker.getChunkSize(),  worker.getChunkSize());
-//        }
-
-//        ExecutorService executor = Executors.newWorkStealingPool(2);
-        BufferedImage img = new BufferedImage((int) canvas.getWidth() + 20, (int) canvas.getHeight() + 20, TYPE_INT_RGB);
-
         for (Chunk chunk : worker.getChunks().values()) {
-//            executor.execute(() -> {
+            gc.setFill(rgb(25, 0, 0));
+            if (chunk.getItems().size() == 0)
+                continue;
+            Coordinates item = chunk.getItems().entrySet().stream().findFirst().get().getValue().getCoors();
+            gc.fillRect(item.getX()/worker.getChunkSize() * worker.getChunkSize(), item.getY()/worker.getChunkSize() * worker.getChunkSize(), worker.getChunkSize(),  worker.getChunkSize());
+        }
+
+        var count = 0;
+        for (Chunk chunk : worker.getChunks().values()) {
+            if (chunk.getTobeRendered())
+                count++;
                 for (Element item : chunk.getItems().values()) {
-                    Color clr = Color.getHSBColor(item.getTexture()[0],item.getTexture()[1],item.getTexture()[2]);
-                    for (int i = 0; i < size; i++) {
-                        for (int j = 0; j < size; j++) {
-                            img.setRGB(item.getCoors().getX()+i, item.getCoors().getY()+j, clr.getRGB());
-                        }
+                    synchronized (this) {
+                        gc.setFill(item.getTexture());
+                        gc.fillRect(item.getCoors().getX() - size / 2, item.getCoors().getY() - size / 2, size, size);
                     }
-//                    synchronized (this) {
-//                        gc.setFill(item.getTexture());
-//                        gc.fillRect(item.getCoors().getX() - size / 2, item.getCoors().getY() - size / 2, size, size);
-//                    }
                 }
 //            });
         }
-        Image tempImg = SwingFXUtils.toFXImage(img, null);
-        gc.drawImage(tempImg, 0, 0);
-//        executor.shutdown();
+        textNumElements.setText(worker.getChunks().size() + " " + count);
     }
 
     private void createPoint(int x, int y) {

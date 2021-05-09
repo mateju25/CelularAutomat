@@ -1,6 +1,7 @@
 package project.model.solid;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import project.model.Coordinates;
 import project.model.Element;
 import project.model.Movable;
@@ -75,7 +76,7 @@ public class Sand extends Element implements Solid, Movable {
     }
 
     @Override
-    public float[] getTexture() {
-        return new float[]{0.11f, 1f, 1f};
+    public Paint getTexture() {
+        return rgb(255, 191, 0);
     }
 }

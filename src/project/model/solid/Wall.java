@@ -1,6 +1,7 @@
 package project.model.solid;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import project.model.Coordinates;
 import project.model.Element;
 import project.model.Immovable;
@@ -17,7 +18,7 @@ public class Wall extends Element implements Immovable {
     }
 
     @Override
-    public float[] getTexture() {
-        return new float[]{0, 0, 0.392f};
+    public Paint getTexture() {
+        return rgb(100, 100, 100);
     }
 }

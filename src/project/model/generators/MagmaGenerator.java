@@ -1,6 +1,7 @@
 package project.model.generators;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import project.model.*;
 import project.model.liquid.Magma;
 
@@ -16,8 +17,8 @@ public class MagmaGenerator extends Element implements Immovable, Generator {
     }
 
     @Override
-    public float[] getTexture() {
-        return new float[]{0.83f, 1, 1};
+    public Paint getTexture() {
+        return rgb(255, 0, 255);
     }
 
     @Override
