@@ -2,17 +2,21 @@ package project.model;
 
 import project.model.generators.Generator;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Worker {
     private int maxHeight;
     private int maxWidth;
     private int size;
-    private int chunkSize = 25;
+    private int chunkSize = 35;
 
     private static Worker single_instance = null;
 
@@ -20,8 +24,9 @@ public class Worker {
 
     public Element getElement(Coordinates coors) {
         var keyCoors = new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize);
-        if (chunks.containsKey(keyCoors)) {
-            Element tmp = chunks.get(keyCoors).getItems().get(coors);
+        var chunk = chunks.get(keyCoors);
+        if (chunk != null) {
+            Element tmp = chunk.getItems().get(coors);
             return tmp;
         }
         return null;
@@ -29,9 +34,10 @@ public class Worker {
 
     public Element removeElement(Coordinates coors) {
         var keyCoors = new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize);
-        if (chunks.containsKey(keyCoors)) {
-            Element tmp = chunks.get(keyCoors).getItems().remove(coors);
-            if (chunks.get(keyCoors).getItems().size() == 0)
+        var chunk = chunks.get(keyCoors);
+        if (chunk != null) {
+            Element tmp = chunk.getItems().remove(coors);
+            if (chunk.getItems().size() == 0)
                 chunks.remove(keyCoors);
             else
                 notifyNeighboursChunks(keyCoors);
@@ -42,27 +48,28 @@ public class Worker {
 
     public void addElement(Coordinates coors, Element newElement) {
         var keyCoors = new Coordinates(coors.getX()/chunkSize, coors.getY()/chunkSize);
-        if (chunks.containsKey(keyCoors)) {
-            if (!chunks.get(keyCoors).getItems().containsKey(coors))
-                chunks.get(keyCoors).getItems().put(coors, newElement);
+        var chunk = chunks.get(keyCoors);
+        if (chunk != null) {
+            if (!chunk.getItems().containsKey(coors))
+                chunk.getItems().put(coors, newElement);
         } else {
-            chunks.put(keyCoors, new Chunk());
-            chunks.get(keyCoors).getItems().put(coors, newElement);
+            Chunk tmp = new Chunk();
+            chunks.put(keyCoors,tmp);
+            tmp.getItems().put(coors, newElement);
         }
         notifyNeighboursChunks(keyCoors);
     }
 
     public void notifyNeighboursChunks(Coordinates coors) {
-        if (chunks.containsKey(coors))
-            chunks.get(coors).setTobeRendered(true);
+        var chunk = chunks.get(coors);
+        if (chunk != null)
+            chunk.setTobeRendered(true);
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
                 var tmp = chunks.get(new Coordinates(coors.getX() + i, coors.getY() + j));
                 if (tmp == null)
                     continue;
-                synchronized (tmp) {
-                    tmp.setTobeRendered(true);
-                }
+                tmp.setTobeRendered(true);
             }
         }
     }

@@ -1,16 +1,13 @@
 package project.gui;
 
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 //import javafx.scene.paint.Color;
-import java.awt.*;
 
 import project.model.*;
 import project.model.gas.Vapor;
@@ -21,14 +18,10 @@ import project.model.liquid.Water;
 import project.model.solid.Sand;
 import project.model.solid.Wall;
 
-import javax.imageio.ImageIO;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
-import java.awt.image.BufferedImage;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
-import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static java.lang.Thread.sleep;
 import static javafx.scene.paint.Color.hsb;
 import static javafx.scene.paint.Color.rgb;
@@ -38,14 +31,16 @@ public class Controller {
     public Pane pane;
     public Label textMode;
     public Label textNumElements;
+    public Label textFps;
 
     private GraphicsContext gc;
 
     private int size = 2;
-    private int load = 10;
+    private int load = 5;
     private int mode = 1;
     private Worker worker;
-    private javafx.embed.swing.SwingFXUtils SwingFXUtils;
+
+    private int fps = 30;
 
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
@@ -57,30 +52,36 @@ public class Controller {
 
         Thread thread = new Thread(() -> {
             while (true) {
-                worker.applyGravity();
-                Platform.runLater(() -> refreshPoints());
-                try {
-                    sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                for (int i = 0; i < fps; i++) {
+                    Platform.runLater(() -> refreshPoints());
+                    try {
+                        sleep(1000/fps);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
         thread.setDaemon(true);
         thread.start();
+
+        Thread secondThread = new Thread(() -> {
+            while (true) {
+                worker.applyGravity();
+                try {
+                    sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        secondThread.setDaemon(true);
+        secondThread.start();
     }
 
     public void refreshPoints() {
         gc.setFill(rgb(0, 0, 0));
         gc.fillRect(0, 0, canvas.getWidth(),  canvas.getHeight());
-        for (Chunk chunk : worker.getChunks().values()) {
-            gc.setFill(rgb(25, 0, 0));
-            if (chunk.getItems().size() == 0)
-                continue;
-            Coordinates item = chunk.getItems().entrySet().stream().findFirst().get().getValue().getCoors();
-            gc.fillRect(item.getX()/worker.getChunkSize() * worker.getChunkSize(), item.getY()/worker.getChunkSize() * worker.getChunkSize(), worker.getChunkSize(),  worker.getChunkSize());
-        }
-
         var count = 0;
         for (Chunk chunk : worker.getChunks().values()) {
             if (chunk.getTobeRendered())
@@ -114,15 +115,6 @@ public class Controller {
                 y = y - j*size;
             }
         }
-//        switch (mode) {
-//            case 1: worker.addPoint(new Sand(new Coordinates(x, y))); break;
-//            case 2: worker.addPoint(new Water(new Coordinates(x, y))); break;
-//            case 3: worker.addPoint(new Wall(new Coordinates(x, y))); break;
-//            case 4: worker.addPoint(new Vapor(new Coordinates((int) (x + new Random().nextDouble()*9 - 3), (int) (y+ new Random().nextDouble()*9 - 3)))); break;
-//            case 5: worker.addPoint(new Magma(new Coordinates(x, y))); break;
-//            case 8: worker.addPoint(new MagmaGenerator(new Coordinates(x, y))); break;
-//            case 9: worker.addPoint(new WaterGenerator(new Coordinates(x, y))); break;
-//        }
     }
 
     public void addPoint(MouseEvent mouseEvent) throws InterruptedException {
@@ -133,8 +125,17 @@ public class Controller {
         int y = (int) ((mouseEvent.getY()) / size) * size;
         if (mouseEvent.getButton().toString().equals("PRIMARY"))
             createPoint(x, y);
-        if (mouseEvent.getButton().toString().equals("SECONDARY"))
-            worker.removePoint(x, y);
+        if (mouseEvent.getButton().toString().equals("SECONDARY")) {
+            for (int i = 0; i < load; i++) {
+                for (int j = 0; j < load; j++) {
+                    x = x + i*size;
+                    y = y + j*size;
+                    worker.removePoint(x, y);
+                    x = x - i*size;
+                    y = y - j*size;
+                }
+            }
+        }
     }
 
     public void moreFunc(KeyEvent keyEvent) {
