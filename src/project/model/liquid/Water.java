@@ -17,12 +17,29 @@ public class Water extends Element implements Liquid, Movable {
     @Override
     public boolean moveLeft() {
         int size = Worker.getInstance().getSize();
+//        if (checkCoors(getX() - 3*size, getY() )) {
+//            if (Worker.getInstance().getElement(new Coordinates(getX() - 3*size, getY())) == null) {
+//                swap( getX() - 3*size, getY() );
+//                return true;
+//            }
+//        }
+//        if (checkCoors(getX() - 2*size, getY() )) {
+//            if (Worker.getInstance().getElement(new Coordinates(getX() - 2*size, getY())) == null) {
+//                swap( getX() - 2*size, getY() );
+//                return true;
+//            }
+//        }
         if (checkCoors(getX() - size, getY())) {
             if (Worker.getInstance().getElement(new Coordinates(getX() - size, getY())) == null) {
                 swap( getX() - size, getY());
                 return true;
             }
+            if (Worker.getInstance().getElement(new Coordinates(getX() - size, getY())) instanceof Oil) {
+                swap( getX() - size, getY());
+                return true;
+            }
             if (Worker.getInstance().getElement(new Coordinates(getX() - size, getY())) instanceof Magma) {
+                ((Magma) Worker.getInstance().getElement(new Coordinates(getX() - size, getY()))).decPower();
                 Worker.getInstance().removeElement(getCoors());
                 Element vapor = new Vapor(new Coordinates(getX(), getY()));
                 Worker.getInstance().addElement(vapor.getCoors(), vapor);
@@ -35,13 +52,29 @@ public class Water extends Element implements Liquid, Movable {
     @Override
     public boolean moveRight() {
         int size = Worker.getInstance().getSize();
+//        if (checkCoors(getX()+ 3*size, getY() )) {
+//            if (Worker.getInstance().getElement(new Coordinates(getX() + 3*size, getY())) == null) {
+//                swap( getX()+ 3*size, getY() );
+//                return true;
+//            }
+//        }
+//        if (checkCoors(getX()+ 2*size, getY() )) {
+//            if (Worker.getInstance().getElement(new Coordinates(getX() + 2*size, getY())) == null) {
+//                swap( getX()+ 2*size, getY() );
+//                return true;
+//            }
+//        }
         if (checkCoors(getX() + size, getY()) ) {
             if (Worker.getInstance().getElement(new Coordinates(getX() + size, getY())) == null) {
                 swap( getX() + size, getY());
                 return true;
             }
-
+            if (Worker.getInstance().getElement(new Coordinates(getX() + size, getY())) instanceof Oil) {
+                swap( getX() + size, getY());
+                return true;
+            }
             if (Worker.getInstance().getElement(new Coordinates(getX() + size, getY())) instanceof Magma) {
+                ((Magma) Worker.getInstance().getElement(new Coordinates(getX() + size, getY()))).decPower();
                 Worker.getInstance().removeElement(getCoors());
                 Element vapor = new Vapor(new Coordinates(getX(), getY()));
                 Worker.getInstance().addElement(vapor.getCoors(), vapor);
@@ -59,7 +92,15 @@ public class Water extends Element implements Liquid, Movable {
                 swap( getX(), getY() + size);
                 return true;
             }
+            if (Worker.getInstance().getElement(new Coordinates(getX() , getY() + size)) instanceof Oil) {
+                swap( getX(), getY() + size);
+                return true;
+            }
             if (Worker.getInstance().getElement(new Coordinates(getX() , getY() + size)) instanceof Magma) {
+                var element = Worker.getInstance().getElement(new Coordinates(getX() , getY() + size));
+                if (element == null)
+                    return false;
+                ((Magma) element).decPower();
                 Worker.getInstance().removeElement(getCoors());
                 Element vapor = new Vapor(new Coordinates(getX(), getY()));
                 Worker.getInstance().addElement(vapor.getCoors(), vapor);
@@ -71,13 +112,24 @@ public class Water extends Element implements Liquid, Movable {
 
     @Override
     public void applyGravity() {
+//        switch (new Random().nextInt() % 3) {
+//            case 0: moveDown(); break;
+//            case 1: if (!moveLeft())
+//                        moveRight();
+//                    break;
+//            case 2: if (!moveRight())
+//                        moveLeft();
+//        }
+//        moveDown();
         if (!moveDown()) {
-            if (new Random().nextBoolean()) {
-                if (!moveLeft())
-                    moveRight();
-            } else {
-                if (!moveRight())
-                    moveLeft();
+            for (int i = 0; i < 5; i++) {
+                if (new Random().nextBoolean()) {
+                    if (!moveLeft())
+                        moveRight();
+                } else {
+                    if (!moveRight())
+                        moveLeft();
+                }
             }
         }
     }

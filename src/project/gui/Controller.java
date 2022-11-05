@@ -10,11 +10,16 @@ import javafx.scene.layout.Pane;
 //import javafx.scene.paint.Color;
 
 import project.model.*;
+import project.model.gas.Fire;
 import project.model.gas.Vapor;
 import project.model.generators.MagmaGenerator;
+import project.model.generators.VoidGenerator;
 import project.model.generators.WaterGenerator;
 import project.model.liquid.Magma;
+import project.model.liquid.Oil;
 import project.model.liquid.Water;
+import project.model.solid.Glass;
+import project.model.solid.Obsidian;
 import project.model.solid.Sand;
 import project.model.solid.Wall;
 
@@ -37,7 +42,7 @@ public class Controller {
 
     private int size = 2;
     private int load = 5;
-    private int mode = 1;
+    private int mode = 0;
     private Worker worker;
 
     private int fps = 30;
@@ -84,7 +89,7 @@ public class Controller {
         gc.fillRect(0, 0, canvas.getWidth(),  canvas.getHeight());
         var count = 0;
         for (Chunk chunk : worker.getChunks().values()) {
-            if (chunk.getTobeRendered())
+            if (chunk.isTobeRendered())
                 count++;
                 for (Element item : chunk.getItems().values()) {
                     synchronized (this) {
@@ -103,13 +108,18 @@ public class Controller {
                 x = x + i*size;
                 y = y + j*size;
                 switch (mode) {
-                    case 1: worker.addPoint(new Sand(new Coordinates(x, y))); break;
-                    case 2: worker.addPoint(new Water(new Coordinates(x, y))); break;
-                    case 3: worker.addPoint(new Wall(new Coordinates(x, y))); break;
+                    case 0: worker.addPoint(new Sand(new Coordinates(x, y))); break;
+                    case 1: worker.addPoint(new Water(new Coordinates(x, y))); break;
+                    case 2: worker.addPoint(new Wall(new Coordinates(x, y))); break;
+                    case 3: worker.addPoint(new Fire(new Coordinates((int) (x + new Random().nextDouble()*9 - 3), (int) (y+ new Random().nextDouble()*9 - 3)))); break;
                     case 4: worker.addPoint(new Vapor(new Coordinates((int) (x + new Random().nextDouble()*9 - 3), (int) (y+ new Random().nextDouble()*9 - 3)))); break;
                     case 5: worker.addPoint(new Magma(new Coordinates(x, y))); break;
-                    case 8: worker.addPoint(new MagmaGenerator(new Coordinates(x, y))); break;
+                    case 6: worker.addPoint(new Oil(new Coordinates(x, y))); break;
+                    case 7: worker.addPoint(new Glass(new Coordinates(x, y))); break;
+                    case 8: worker.addPoint(new Obsidian(new Coordinates(x, y))); break;
                     case 9: worker.addPoint(new WaterGenerator(new Coordinates(x, y))); break;
+                    case 10: worker.addPoint(new MagmaGenerator(new Coordinates(x, y))); break;
+                    case 11: worker.addPoint(new VoidGenerator(new Coordinates(x, y))); break;
                 }
                 x = x - i*size;
                 y = y - j*size;
@@ -142,33 +152,27 @@ public class Controller {
         if (keyEvent.getCode().getName().equals("Space")) {
             worker.clearPoints();
         }
-        if (keyEvent.getCode().getName().equals("Numpad 1")) {
-            mode = 1;
-            textMode.setText("1");
+        if (keyEvent.getCode().getName().equals("Add")) {
+            if (mode < 11)
+                mode = (mode + 1);
         }
-        if (keyEvent.getCode().getName().equals("Numpad 2")) {
-            mode = 2;
-            textMode.setText("2");
+        if (keyEvent.getCode().getName().equals("Subtract")) {
+            if (mode > 0)
+                mode = (mode - 1);
         }
-        if (keyEvent.getCode().getName().equals("Numpad 3")) {
-            mode = 3;
-            textMode.setText("3");
-        }
-        if (keyEvent.getCode().getName().equals("Numpad 4")) {
-            mode = 4;
-            textMode.setText("4");
-        }
-        if (keyEvent.getCode().getName().equals("Numpad 5")) {
-            mode = 5;
-            textMode.setText("5");
-        }
-        if (keyEvent.getCode().getName().equals("Numpad 9")) {
-            mode = 9;
-            textMode.setText("9");
-        }
-        if (keyEvent.getCode().getName().equals("Numpad 8")) {
-            mode = 8;
-            textMode.setText("8");
+        switch (mode) {
+            case 0: textMode.setText("Sand"); break;
+            case 1: textMode.setText("Water"); break;
+            case 2: textMode.setText("Wall"); break;
+            case 3: textMode.setText("Fire"); break;
+            case 4: textMode.setText("Vapor"); break;
+            case 5: textMode.setText("Magma"); break;
+            case 6: textMode.setText("Oil");  break;
+            case 7: textMode.setText("Glass"); break;
+            case 8: textMode.setText("Obsidian"); break;
+            case 9: textMode.setText("WaterGenerator"); break;
+            case 10: textMode.setText("MagmaGenerator"); break;
+            case 11: textMode.setText("VoidGenerator"); break;
         }
     }
 

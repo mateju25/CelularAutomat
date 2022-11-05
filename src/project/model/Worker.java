@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,6 +55,7 @@ public class Worker {
                 chunk.getItems().put(coors, newElement);
         } else {
             Chunk tmp = new Chunk();
+            tmp.setCoors(keyCoors);
             chunks.put(keyCoors,tmp);
             tmp.getItems().put(coors, newElement);
         }
@@ -136,16 +138,47 @@ public class Worker {
         synchronized (this) {
             ExecutorService executor = Executors.newWorkStealingPool(4);
             for (Chunk chunk : new ConcurrentHashMap<>(chunks).values()) {
-                if (!chunk.getTobeRendered())
+                for (Element item : new ConcurrentHashMap<>(chunk.getItems()).values()) {
+                    item.setRendered(false);
+                }
+            }
+            for (Chunk chunk : new ConcurrentHashMap<>(chunks).values()) {
+                if ((chunk.getCoors().getX() + chunk.getCoors().getY()) % 2 == 0)
+                    continue;
+                if (!chunk.isTobeRendered())
                     continue;
                 chunk.setTobeRendered(false);
                 executor.execute(() -> {
                     for (Element item : new ConcurrentHashMap<>(chunk.getItems()).values()) {
-                        if (item instanceof Movable) {
-                            item.applyGravity();
-                        } else {
-                            if (item instanceof Generator)
-                                ((Generator) item).generateElements();
+                        if (!item.isRendered()) {
+                            if (item instanceof Movable) {
+                                item.applyGravity();
+                            } else {
+                                if (item instanceof Generator)
+                                    ((Generator) item).generateElements();
+                            }
+                            item.setRendered(true);
+                        }
+                    }
+                });
+            }
+
+            for (Chunk chunk : new ConcurrentHashMap<>(chunks).values()) {
+                if ((chunk.getCoors().getX() + chunk.getCoors().getY()) % 2 == 1)
+                    continue;
+                if (!chunk.isTobeRendered())
+                    continue;
+                chunk.setTobeRendered(false);
+                executor.execute(() -> {
+                    for (Element item : new ConcurrentHashMap<>(chunk.getItems()).values()) {
+                        if (!item.isRendered()) {
+                            if (item instanceof Movable) {
+                                item.applyGravity();
+                            } else {
+                                if (item instanceof Generator)
+                                    ((Generator) item).generateElements();
+                            }
+                            item.setRendered(true);
                         }
                     }
                 });

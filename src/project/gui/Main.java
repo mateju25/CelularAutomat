@@ -9,6 +9,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import project.model.Coordinates;
+import project.model.gas.Fire;
 
 public class Main extends Application {
     public static Stage primaryStage;
@@ -21,7 +23,6 @@ public class Main extends Application {
 //        Main.primaryStage.setMaximized(true);
         Main.primaryStage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);

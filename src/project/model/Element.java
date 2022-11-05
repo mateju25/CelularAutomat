@@ -5,6 +5,7 @@ import javafx.scene.paint.Paint;
 
 public abstract class Element {
     private Coordinates coors;
+    private boolean rendered = false;
 
     public Element(Coordinates coors) {
         this.coors = coors;
@@ -12,6 +13,14 @@ public abstract class Element {
 
     public Coordinates getCoors() {
         return coors;
+    }
+
+    public boolean isRendered() {
+        return rendered;
+    }
+
+    public void setRendered(boolean rendered) {
+        this.rendered = rendered;
     }
 
     protected int getX() {

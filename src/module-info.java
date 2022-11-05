@@ -3,6 +3,7 @@ module JavaFxApplication {
     requires javafx.controls;
     requires java.desktop;
     requires javafx.swing;
+    requires lombok;
 
     opens project.gui;
 }
